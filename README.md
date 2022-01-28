@@ -35,5 +35,5 @@ REPORT_GAS=<true_or_false>
 
 * Deploy the contract
 ```console
-$ yarn hardhat bsctestnet:NFTRoyalty --name <NFT_TOKEN_NAME> --symbol <NFT_SYMBOL_NAME>
+$ yarn hardhat bsctestnet:NFTRoyalty --name <NFT_TOKEN_NAME> --symbol <NFT_SYMBOL_NAME> --network bsctestnet
 ```

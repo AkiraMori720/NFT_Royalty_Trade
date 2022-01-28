@@ -60,7 +60,13 @@ contract NftTrader {
 
         // Get NftRoyalty Token Data
         NftRoyalty token = NftRoyalty(contractAddr);
-        (uint256 artistRoyalty, address artistAddr, uint256 charityRoyalty, address charityAddr) = token.getRoyaltyData(tokenId);
+        (, uint256 artistRoyalty, address artistAddr, uint256 charityRoyalty, address charityAddr) = token.getRoyaltyData(tokenId);
+
+        // Pay to contract
+        payable(address(this)).transfer(msg.value);
+
+        // NFT Transfer
+        token.transferFrom(item.seller, msg.sender, tokenId);
 
         // Calculate Royalty for artist and charity
         uint256 artistRoyalAmt = (artistRoyalty * msg.value)/PERCENT_DIVISOR;
@@ -71,6 +77,8 @@ contract NftTrader {
         royaltyBalances[charityAddr] += charityRoyalAmt;
         balances[item.seller] += msg.value - artistRoyalAmt - charityRoyalAmt;
 
+        delete trades[contractAddr][tokenId];
+
         emit Purchase(contractAddr, tokenId, item.price);
     }
 
@@ -80,6 +88,7 @@ contract NftTrader {
         require(amount > 0, "No Funds");
 
         destAddr.transfer(amount);
+
         balances[msg.sender] = 0;
 
         emit Withdraw(destAddr, amount);
@@ -91,8 +100,18 @@ contract NftTrader {
         require(amount > 0, "No Funds");
 
         destAddr.transfer(amount);
+
         royaltyBalances[msg.sender] = 0;
 
         emit ClaimRoyalty(destAddr, amount);
+    }
+
+    event Receive(uint value);
+    /// Receive Ether
+    fallback() external payable {
+        emit Receive(msg.value);
+    }
+    receive() external payable {
+        emit Receive(msg.value);
     }
 }

@@ -68,11 +68,16 @@ contract NftRoyalty is ERC721 {
         return super.tokenURI(tokenId);
     }
 
+    function getTokenCount() external view returns (uint256){
+        return _tokenIds.current();
+    }
+
     /// Get Token`s Royalty Data
     /// @param tokenId NFT Token ID
-    function getRoyaltyData(uint256 tokenId) public view returns (uint256 artistRoyalty, address artistAddr, uint256 charityRoyalty, address charityAddr){
+    function getRoyaltyData(uint256 tokenId) public view returns (string memory uri, uint256 artistRoyalty, address artistAddr, uint256 charityRoyalty, address charityAddr){
         require(_exists(tokenId), "NftRoyalty: URI query for nonexistent token");
 
+        uri = _tokenDataMap[tokenId].uri;
         artistRoyalty = _tokenDataMap[tokenId].artistRoyalty;
         artistAddr = _tokenDataMap[tokenId].artistAddr;
         charityRoyalty = _tokenDataMap[tokenId].charityRoyalty;
